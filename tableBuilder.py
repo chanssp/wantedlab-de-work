@@ -1,8 +1,6 @@
 import requests
-import json
 import pandas as pd
-
-from utils import getPropertyItem
+from tableItem import getTableItem
 
 api_key = ''
 base_url = 'https://api.notion.com/v1/'
@@ -15,14 +13,6 @@ header = {
     'Content-Type': 'application/json; charset=utf-8',
     'Notion-Version': '2022-06-28'
 }
-
-# class TableBuilder:
-#     header = ''
-#     baseUrl = ''
-
-#     def __init__(self, header, url):
-#         self.header = header
-#         self.baseUrl = url
     
 # return type <tuple>: (table_name, column_list)
 def getTableSchema(database_id):
@@ -69,7 +59,7 @@ def getTableRows(database_id, schema):
             prop_id = row["properties"][key]["id"]
             # item = getItem(page_id, prop_id)
             
-            item = getPropertyItem(getItem(page_id, prop_id))
+            item = getTableItem(getItem(page_id, prop_id))
             
             rows[key].append(item)
         
@@ -81,7 +71,7 @@ def getTableRows(database_id, schema):
 def turnIntoDataFrame(table_info):
     return (table_info[0], pd.DataFrame(table_info[1]))
 
-# 위 모든 변환을 한번에 하는 함수
+# 위 변환을 한번에 이어주는 함수
 def getDataframeFromDatabase(database_id):
     schema = getTableSchema(database_id)
     table = getTableRows(database_id, schema)

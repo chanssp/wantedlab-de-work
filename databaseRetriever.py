@@ -12,8 +12,7 @@ header = {
     'Notion-Version': '2022-06-28'
 }
 
-
-# 루트 페이지의 모든 하위 페이지 및 블록을 돌기위한 함수
+# 루트 페이지의 모든 하위 페이지 및 블록을 도는 재귀 함수
 def getChildrenBlocksRecursively(page_id, database_ids):
     url = base_url + f'blocks/{page_id}/children'
     r = requests.get(url, headers=header)
@@ -30,6 +29,7 @@ def getChildrenBlocksRecursively(page_id, database_ids):
     
     return database_ids
 
+# 루트 블록을 넣었을 때 하위의 모든 database id를 반환하는 함수
 def getDatabaseIds(root_id):
     ids = []
     res = getChildrenBlocksRecursively(root_id, ids)
