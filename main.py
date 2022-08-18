@@ -20,11 +20,11 @@ def printDataframe(dfs):
         print (dfs[key])
         print ('----------------------')
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     root = ''
     dataframes = dict()
 
-    with open("./config/root.txt", "r") as file:
+    with open('./config/root.txt', 'r') as file:
         root = file.read()
 
     dataframes = main(root)

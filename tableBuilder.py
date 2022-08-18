@@ -5,7 +5,7 @@ from tableItem import getTableItem
 api_key = ''
 base_url = 'https://api.notion.com/v1/'
 
-with open("./config/credentials.txt", "r") as file:
+with open('./config/credentials.txt', 'r') as file:
     api_key = file.read()
 
 header = {
@@ -22,10 +22,10 @@ def getTableSchema(database_id):
     res = r.json()
     
     # title: array of rich-text objects
-    title = res["title"][0]["plain_text"]
+    title = res['title'][0]['plain_text']
 
     # keys: column names of the database
-    keys = list(res["properties"].keys())
+    keys = list(res['properties'].keys())
 
     return (title, keys)
 
@@ -34,7 +34,6 @@ def getItem(page_id, property_id):
 
     r = requests.get(url, headers=header)
 
-    # types에 있는 파일과 같은 형태
     res = r.json()
     return res
 
@@ -50,20 +49,14 @@ def getTableRows(database_id, schema):
     for key in keys:
         rows[key] = []
 
-    # 테이블 row별 처리
-    for row in res["results"]:
-        page_id = row["id"]
-        # print(page_id)
-
-        for key in keys:
-            prop_id = row["properties"][key]["id"]
-            # item = getItem(page_id, prop_id)
-            
-            item = getTableItem(getItem(page_id, prop_id))
-            
-            rows[key].append(item)
+    # row별로 item 추가해주기
+    for row in res['results']:
+        page_id = row['id']
         
-        # print(row["properties"])
+        for key in keys:
+            prop_id = row['properties'][key]['id']
+            item = getTableItem(getItem(page_id, prop_id))
+            rows[key].append(item)
     
     return (schema[0], rows)
 
@@ -71,7 +64,7 @@ def getTableRows(database_id, schema):
 def turnIntoDataFrame(table_info):
     return (table_info[0], pd.DataFrame(table_info[1]))
 
-# 위 변환을 한번에 이어주는 함수
+# 위 모든 변환을 한 flow로 이어주는 함수
 def getDataframeFromDatabase(database_id):
     schema = getTableSchema(database_id)
     table = getTableRows(database_id, schema)

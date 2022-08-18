@@ -1,4 +1,4 @@
-from tableItemHelper import isEmptyCell, property_item, list_item
+from tableItemHelperFunctions import isEmptyCell, property_item, list_item
 
 # 빈 값이 아닐 때, 테이블의 값을 가져오는 함수
 def getTableItem(item):

@@ -3,7 +3,7 @@ import requests
 api_key = ''
 base_url = 'https://api.notion.com/v1/'
 
-with open("./config/credentials.txt", "r") as file:
+with open('./config/credentials.txt', 'r') as file:
     api_key = file.read()
 
 header = {
@@ -18,14 +18,14 @@ def getChildrenBlocksRecursively(page_id, database_ids):
     r = requests.get(url, headers=header)
 
     res = r.json()
-    blocks = res["results"]
+    blocks = res['results']
     for block in blocks:
-        if block["has_children"] == False:
-            if block["type"] == "child_database":
-                database_ids.append(block["id"])
+        if block['has_children'] == False:
+            if block['type'] == 'child_database':
+                database_ids.append(block['id'])
 
         else:
-            getChildrenBlocksRecursively(block["id"], database_ids)
+            getChildrenBlocksRecursively(block['id'], database_ids)
     
     return database_ids
 
