@@ -4,6 +4,7 @@ from databaseRetriever import getDatabaseIds
 # 메인 함수
 def main(root):
     ids = getDatabaseIds(root)
+    dataframes = dict()
 
     for id in ids:
         df = getDataframeFromDatabase(id)
@@ -22,11 +23,10 @@ def printDataframe(dfs):
 
 if __name__ == '__main__':
     root = ''
-    dataframes = dict()
 
     with open('./config/root.txt', 'r') as file:
         root = file.read()
 
-    dataframes = main(root)
+    tables = main(root)
 
-    printDataframe(dataframes)
+    printDataframe(tables)
