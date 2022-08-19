@@ -4,15 +4,12 @@ def isEmptyCell(item):
         type = item['type']
         if item[type] is None:
             return True
-
-        return False
-    
     # list object
     else: 
         if len(item['results']) == 0:
             return True
 
-        return False
+    return False
 
 # <all possible page property types>
 

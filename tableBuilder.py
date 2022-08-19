@@ -1,21 +1,10 @@
 import requests
 import pandas as pd
 from tableItem import getTableItem
-
-api_key = ''
-base_url = 'https://api.notion.com/v1/'
-
-with open('./config/credentials.txt', 'r') as file:
-    api_key = file.read()
-
-header = {
-    'Authorization': f'Bearer {api_key}',
-    'Content-Type': 'application/json; charset=utf-8',
-    'Notion-Version': '2022-06-28'
-}
+from config.config import base_url, buildApiHeader
     
 # return type <tuple>: (table_name, column_list)
-def getTableSchema(database_id):
+def getTableSchema(database_id, header):
     url = base_url + f'databases/{database_id}'
     
     r = requests.get(url, headers=header)
@@ -29,7 +18,7 @@ def getTableSchema(database_id):
 
     return (title, keys)
 
-def getItem(page_id, property_id):
+def getItem(page_id, property_id, header):
     url = base_url + f'pages/{page_id}/properties/{property_id}'
 
     r = requests.get(url, headers=header)
@@ -38,7 +27,7 @@ def getItem(page_id, property_id):
     return res
 
 # return type <tuple>: (table_name, table_rows)
-def getTableRows(database_id, schema):
+def getTableRows(database_id, schema, header):
     url = base_url + f'databases/{database_id}/query'
 
     r = requests.post(url, headers=header)
@@ -55,7 +44,7 @@ def getTableRows(database_id, schema):
         
         for key in keys:
             prop_id = row['properties'][key]['id']
-            item = getTableItem(getItem(page_id, prop_id))
+            item = getTableItem(getItem(page_id, prop_id, header))
             rows[key].append(item)
     
     return (schema[0], rows)
@@ -65,9 +54,11 @@ def turnIntoDataFrame(table_info):
     return (table_info[0], pd.DataFrame(table_info[1]))
 
 # 위 모든 변환을 한 flow로 이어주는 함수
-def getDataframeFromDatabase(database_id):
-    schema = getTableSchema(database_id)
-    table = getTableRows(database_id, schema)
+# main function 에서 사용
+def getDataframeFromDatabase(database_id, api_key):
+    header = buildApiHeader(api_key)
+    schema = getTableSchema(database_id, header)
+    table = getTableRows(database_id, schema, header)
     res = turnIntoDataFrame(table)
 
     return res

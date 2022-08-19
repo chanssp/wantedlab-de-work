@@ -1,19 +1,10 @@
+from distutils.command.build import build
 import requests
-
-api_key = ''
-base_url = 'https://api.notion.com/v1/'
-
-with open('./config/credentials.txt', 'r') as file:
-    api_key = file.read()
-
-header = {
-    'Authorization': f'Bearer {api_key}',
-    'Content-Type': 'application/json; charset=utf-8',
-    'Notion-Version': '2022-06-28'
-}
+from config.config import base_url, buildApiHeader
 
 # 루트 페이지의 모든 하위 페이지 및 블록을 도는 재귀 함수
-def getChildrenBlocksRecursively(page_id, database_ids):
+# return type [string]: [database_ids]
+def getChildrenBlocksRecursively(page_id, database_ids, header):
     url = base_url + f'blocks/{page_id}/children'
     r = requests.get(url, headers=header)
 
@@ -25,12 +16,14 @@ def getChildrenBlocksRecursively(page_id, database_ids):
                 database_ids.append(block['id'])
 
         else:
-            getChildrenBlocksRecursively(block['id'], database_ids)
+            getChildrenBlocksRecursively(block['id'], database_ids, header)
     
     return database_ids
 
 # 루트 블록을 넣었을 때 하위의 모든 database id를 반환하는 함수
-def getDatabaseIds(root_id):
+# main function 에서 사용
+def getDatabaseIds(root_id, api_key):
+    header = buildApiHeader(api_key)
     ids = []
-    res = getChildrenBlocksRecursively(root_id, ids)
+    res = getChildrenBlocksRecursively(root_id, ids, header)
     return res
